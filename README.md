@@ -1,8 +1,10 @@
+
 # PSFoil
 
 A PS5 homebrew payload for browsing Ownfoil/Tinfoil stores and managing Switch games stored on your console.
 
-![image](Main.png)
+<img width="1550" height="696" alt="Main" src="https://github.com/user-attachments/assets/4832693c-4faa-4467-a3f0-df3a8fb908ab" />
+<img width="1530" height="689" alt="Installed" src="https://github.com/user-attachments/assets/57dfc772-30e1-43aa-93b0-947e633c1b4a" />
 
 ## Features
 
