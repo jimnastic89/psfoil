@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>PSFoil</title>
+    <link rel="stylesheet" href="/boot.css">
+    <link rel="stylesheet" href="/style.css">
+    <script src="/icons.js" defer></script>
+    <script src="/app.js" defer></script>
+    <script src="/uploads.js" defer></script>
+</head>
+
+<body class="booting">
+    <div id="bootLoading" role="status" aria-live="polite"><span class="bootSpinner" aria-hidden="true"></span><span id="bootLoadingText">Loading PSFoil…</span><button id="retryBoot" type="button" hidden>Retry</button><noscript>Enable JavaScript to use PSFoil.</noscript></div>
+    <header><button id="backButton" type="button" class="secondary" hidden>Back</button><a href="#" id="home">
+            <strong>PSFoil</strong></a><span class="tag">__PSFOIL_VERSION__</span><button id="downloadsButton" type="button"
+            class="secondary">Downloads</button><button id="settingsButton" type="button">Settings</button><button
+            id="quitButton" type="button" class="secondary">Quit</button></header>
+    <main><button id="uploadActivity" type="button" hidden><span id="uploadActivityText"></span><progress id="uploadActivityProgress" max="1" value="0"></progress></button><button id="downloadActivity" type="button" hidden><span id="downloadActivityText"></span><progress
+                id="downloadProgress" max="1"></progress></button>
+        <p id="message" role="status" aria-live="polite"></p>
+        <section id="stores" hidden>
+            <div class="heading">
+                <div>
+                    <p class="eyebrow">YOUR LIBRARY SOURCES</p>
+                </div><button id="addStore">Add store</button>
+            </div>
+            <div id="storeGrid" class="storeGrid"></div>
+        </section>
+        <section id="downloads" hidden>
+            <div class="heading">
+                <h1>Downloads</h1><button id="clearDownloads" type="button" class="secondary"
+                    title="Clear finished history items; active downloads continue">Clear all</button>
+            </div>
+            <div id="downloadJobs"></div>
+        </section>
+        <section id="stopped" hidden>
+            <h1>PSFoil is stopping</h1>
+            <p>Active downloads are being cancelled. Load psfoil.elf again to reopen the UI.</p>
+        </section>
+        <section id="catalogue" hidden>
+            <div class="heading">
+                <div>
+                    <p class="eyebrow" id="storeType"></p>
+                    <h1 id="storeName"></h1>
+                </div><div class="actions"><button id="uploadButton" type="button" hidden>Upload</button><button id="convertAll" type="button" hidden>Convert all NSZ</button><button id="reload">Refresh catalogue</button></div>
+            </div>
+            <div class="toolbar">
+                <div class="search"><label for="search">Search games</label>
+                    <div class="searchControl"><input id="search" type="search" placeholder="Title or title ID"><button
+                            id="clearSearch" type="button" aria-label="Clear search" title="Clear search"
+                            hidden>×</button></div>
+                </div><label>View<select id="view">
+                        <option value="grid">Artwork grid</option>
+                        <option value="list">Details list</option>
+                    </select></label><label id="installedFilter" class="toggle"><input id="showInstalled"
+                        type="checkbox">Show installed games</label><span id="count" class="muted"></span>
+            </div>
+            <div class="browser">
+                <div id="games" class="games grid"></div>
+                <aside id="gameDetails" tabindex="0" role="region" aria-label="Game details">
+                    <h2>Select a game</h2>
+                </aside>
+            </div>
+        </section>
+        <section id="settings" hidden>
+            <h1>Settings</h1>
+            <form id="settingsForm">
+                <fieldset>
+                    <legend>Appearance</legend><label class="toggle"><input id="lightMode" type="checkbox">Light mode</label><label>Accent colour<select id="theme">
+                            <option value="red">Red (default)</option>
+                            <option value="green">Green</option>
+                            <option value="blue">Blue</option>
+                            <option value="orange">Orange</option>
+                            <option value="pink">Pink</option>
+                            <option value="magenta">Magenta</option>
+                            <option value="cyan">Cyan</option>
+                            <option value="purple">Purple</option>
+                        </select></label>
+                </fieldset>
+                <fieldset>
+                    <legend>Downloads</legend><label>Custom download directory<input id="downloadDirectory"
+                            placeholder="Use ProsperoEden game_files when blank"></label><label class="toggle"><input
+                            id="splitDownloads" type="checkbox" checked>Split downloads into roms and updates
+                        subfolders</label>
+                    <p class="muted">When disabled, all completed files go directly into the selected directory. Keys
+                        are always read from ProsperoEden's keys folder.</p>
+                </fieldset>
+                <fieldset>
+                    <legend>Title metadata</legend>
+                    <div class="fields"><label>Region<input id="region" maxlength="2" pattern="[A-Z]{2}"
+                                required></label><label>Language<input id="language" maxlength="2" pattern="[a-z]{2}"
+                                required></label></div>
+                    <p class="muted">Default: US / en. Uses blawar/titledb regional metadata. Save changes before
+                        refreshing.</p><button type="button" id="metadataRefresh">Refresh titledb cache</button>
+                </fieldset>
+                <fieldset>
+                    <legend>Stores</legend>
+                    <div id="storeFields"></div><button type="button" id="newStore">Add store</button>
+                </fieldset>
+                <div class="actions"><button type="button" id="cancelSettings">Back</button></div>
+            </form>
+            <fieldset>
+                <legend>Home screen shortcut</legend>
+                <p id="tileStatus" role="status"></p><button type="button" id="repairTile">Install / repair home
+                    tile</button>
+            </fieldset>
+            <details id="rawConfigDetails">
+                <summary>View raw configuration JSON</summary>
+                <p>Configuration file: <code id="rawConfigPath">Loading…</code></p>
+                <p id="rawConfigNote" class="muted">Saved configuration; unsaved edits are not shown. Password values are redacted.</p>
+                <pre id="rawConfigJson"></pre>
+            </details>
+            <div id="settingsSavePrompt" role="dialog" aria-modal="false" aria-labelledby="settingsSaveTitle" hidden>
+                <div><strong id="settingsSaveTitle">Unsaved settings</strong><p>Save your changes to keep them after restarting PSFoil.</p></div>
+                <div class="actions"><button id="saveSettings" type="button">Save settings</button><button id="discardSettings" type="button" class="secondary">Discard</button></div>
+            </div>
+        </section>
+    </main>
+    <div id="storeOverlay" class="storeOverlay" hidden>
+        <section class="storeDialog" role="dialog" aria-modal="true" aria-labelledby="addStoreTitle">
+            <h2 id="addStoreTitle">Add store</h2>
+            <form id="addStoreForm">
+                <label>Store name<input id="newStoreName" required></label>
+                <label>Store type<select id="newStoreType"><option value="ownfoil">Ownfoil</option><option value="tinfoil">Tinfoil JSON</option></select></label>
+                <label>Store URL<input id="storeUrl" type="text" inputmode="url" placeholder="https://your-store.example" required></label>
+                <label>Store username<input id="storeUsername" autocomplete="username"></label>
+                <label>Store password<input id="storePassword" type="password" autocomplete="new-password"></label>
+                <p id="storeOverlayError" role="alert"></p>
+                <div class="actions"><button id="saveNewStore" type="submit">Save store</button><button id="cancelAddStore" type="button" class="secondary">Cancel</button></div>
+            </form>
+        </section>
+    </div>
+    <div id="uploadOverlay" class="storeOverlay" hidden>
+        <section class="storeDialog uploadDialog" role="dialog" aria-modal="true" aria-labelledby="uploadTitle">
+            <h2 id="uploadTitle">Upload games</h2>
+            <p>Upload NSP, NSZ or XCI files. Games are inspected and sorted into your configured download directory. NSZ files are converted to NSP.</p>
+            <div id="uploadDrop" tabindex="0" role="button" aria-label="Drop game files or folders, or select files">Drop game files or folders here</div>
+            <div class="actions"><button id="selectUploadFiles" type="button">Choose files</button><button id="selectUploadFolder" type="button">Choose folder</button></div>
+            <input id="uploadFiles" type="file" accept=".nsp,.nsz,.xci" multiple hidden>
+            <input id="uploadFolder" type="file" webkitdirectory directory multiple hidden>
+            <p class="muted">Folder selection depends on your browser. Folder structure is replaced by the configured roms/updates layout; unrelated files are skipped.</p>
+            <p id="uploadSummary" role="status" aria-live="polite">No files selected.</p>
+            <ul id="uploadSelection"></ul>
+            <progress id="uploadProgress" max="1" value="0" aria-label="Upload progress" hidden></progress>
+            <p id="uploadStatus" role="status" aria-live="polite"></p>
+            <p id="uploadError" role="alert"></p>
+            <div class="actions"><button id="startUpload" type="button" disabled>Upload</button><button id="cancelUpload" type="button" class="secondary" hidden>Cancel upload</button><button id="clearUpload" type="button" class="secondary" disabled>Clear</button><button id="closeUpload" type="button" class="secondary">Close</button></div>
+        </section>
+    </div>
+    <footer>PSFoil · <span id="lanAddress">Starting...</span></footer>
+</body>
+
+</html>

@@ -1,0 +1,37 @@
+# Build-only source allowlist. Other workspace files remain local.
+*
+!/.gitignore
+!/README.md
+!/LICENSE
+!/Makefile
+!/VERSION
+
+!/src/
+!/src/**
+!/web/
+!/web/*.html
+!/web/*.js
+!/web/*.css
+!/web/icons/
+!/web/icons/*.png
+!/web/icons/*.svg
+!/web/icons/README.md
+!/assets/
+!/assets/icon0.png
+!/tools/
+!/tools/embed.py
+!/tools/manifest.py
+!/vendor/
+!/vendor/**
+
+# Generated files must stay excluded inside allowed directories too.
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.o
+**/*.elf
+**/*.tmp
+**/*.bak
+**/*~
+**/.DS_Store
+**/Thumbs.db
