@@ -1,5 +1,4 @@
-
-# PSFoil
+# <img src="assets/icon0.png" width="64" align="absmiddle"> PSFoil
 
 A PS5 homebrew payload for browsing Ownfoil/Tinfoil stores and managing Switch games stored on your console.
 
